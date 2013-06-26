@@ -1,0 +1,37 @@
+name: ${project.name}
+main: ${main.class}
+version: ${project.version}
+author: cmastudios
+description: ${project.description}
+website: ${project.url}
+database: true
+depend: [WorldEdit]
+commands:
+  ironballarena:
+    description: Create & configure IronBall arenas.
+    usage: |
+      /<command> <name> - View information about an arena.
+      /<command> <name> set - Creates or modifies the bounds of an arena from your current WorldEdit selection.
+      /<command> <name> setgoal <red/blue> - Set the team's goal to your current WorldEdit selection.
+      /<command> <name> setspawn <red/blue/golem/spectator> - Change the spawn for a gameplay component to your current location.
+      /<command> <name> maxscore <score> - Set the winning score.
+      /<command> <name> rename <newname> - Rename an arena.
+      /<command> <name> stop - Kick all players out of an arena.
+      /<command> <name> delete - Delete an arena.
+    aliases: [iba, iarena, ballarena, ironarena]
+    permission: ironball.admin
+  ironballbypass:
+    description: Enter arenas without being a player.
+    usage: |
+      /<command> - Enable entering arenas without playing.
+    permission: ironball.admin
+  ironball:
+    description: Play a game of IronBall
+    aliases: [ib, ball]
+    usage: |
+      /<command> list - Display a list of IronBall arenas.
+      /<command> start <arena> - Start a game at an arena.
+      /<command> play <arena> - Sign up to play a game.
+      /<command> spectate <arena> - Spectate a game.
+      /<command> leave - Leave an arena.
+    permission: ironball.play
