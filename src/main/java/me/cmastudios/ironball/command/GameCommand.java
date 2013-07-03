@@ -55,7 +55,8 @@ public class GameCommand implements CommandExecutor {
                 Game startGame = new Game(arena);
                 plugin.activeGames.add(startGame);
                 startGame.startGame(plugin);
-                plugin.getServer().broadcastMessage(IronBall.getPrefix() + IronBall.getString("GAME.ANNOUNCE", new Object[]{sender.getName(), arena.getName(), Game.MIN_PLAYERS}));
+                plugin.getServer().broadcast(IronBall.getPrefix() + IronBall.getString("GAME.ANNOUNCE",
+                    new Object[]{sender.getName(), arena.getName(), Game.MIN_PLAYERS}), "ironball.play." + arena.getName());
                 break;
             case PLAY:
                 if (player == null) {
