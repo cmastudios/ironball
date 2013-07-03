@@ -10,8 +10,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -120,5 +122,14 @@ public class IronBallListener implements Listener {
                 && plugin.getConfig().getBoolean("damage.golem") == false) {
             event.setDamage(0);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onEntityDeath(final EntityDeathEvent event) {
+        if (event.getEntityType() == EntityType.IRON_GOLEM
+	            && plugin.getGameByLocation(event.getEntity().getLocation()) != null) {
+            event.getDrops().clear(); // Prevent IronGolem dropping items in arena
+            event.setDroppedExp(0);
+        }        
     }
 }
