@@ -3,12 +3,12 @@ package me.cmastudios.ironball.command;
 import me.cmastudios.ironball.Arena;
 import me.cmastudios.ironball.Game;
 import me.cmastudios.ironball.IronBall;
-import me.cmastudios.ironball.TeamType;
-import me.cmastudios.ironball.task.GameStartTimer;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class GameCommand implements CommandExecutor {
 
@@ -48,6 +48,10 @@ public class GameCommand implements CommandExecutor {
                         return true;
                     }
                 }
+                if (!sender.hasPermission("ironball.start." + arena.getName())) {
+                    sender.sendMessage(IronBall.getString("GAME.START.NOPERMS"));
+                    return true;
+                }
                 Game startGame = new Game(arena);
                 plugin.activeGames.add(startGame);
                 startGame.startGame(plugin);
@@ -61,6 +65,10 @@ public class GameCommand implements CommandExecutor {
                 if (arena == null) {
                     sender.sendMessage(IronBall.getString("OPT.NOTENOUGH", new Object[] {}));
                     return false;
+                }
+                if (!sender.hasPermission("ironball.play." + arena.getName())) {
+                    sender.sendMessage(IronBall.getString("GAME.START.NOPERMS"));
+                    return true;
                 }
                 Game playGame = plugin.getGameByArena(arena);
                 if (playGame == null) {
@@ -88,6 +96,23 @@ public class GameCommand implements CommandExecutor {
                     }
                 }
                 break;
+            case LIST:
+                StringBuilder arenaList = new StringBuilder(IronBall.getString("ARENA.LIST"));
+                for (Arena arenaItem : plugin.getDatabase().find(Arena.class).findList()) {
+                    arenaList.append(' ').append(plugin.getGameByArena(arenaItem) == null ? ChatColor.YELLOW : ChatColor.GREEN).append(arenaItem.getName());
+                }
+                sender.sendMessage(arenaList.toString());
+                break;
+            case SPECTATE:
+                if (player == null) {
+                    sender.sendMessage("Can't find player " + sender.getName());
+                    return true;
+                }
+                if (arena == null) {
+                    sender.sendMessage(IronBall.getString("OPT.NOTENOUGH", new Object[] {}));
+                    return false;
+                }
+                player.teleport(Arena.deserializeLocation(arena.getSpectatorSpawn()), TeleportCause.COMMAND);
             default:
                 break;
         }

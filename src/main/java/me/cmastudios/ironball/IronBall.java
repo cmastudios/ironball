@@ -5,7 +5,9 @@ import com.sk89q.worldedit.bukkit.BukkitUtil;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.persistence.PersistenceException;
 import me.cmastudios.ironball.command.*;
@@ -18,6 +20,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -28,8 +31,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class IronBall extends JavaPlugin {
 
     private static final ResourceBundle messages = ResourceBundle.getBundle("messages");
-    public List<Game> activeGames = new ArrayList();
-    public List<Player> arenaBypass = new ArrayList();
+    public List<Game> activeGames = new ArrayList<Game>();
+    public List<Player> arenaBypass = new ArrayList<Player>();
     public static ItemStack STICK;
 
     public IronBall() {
@@ -44,7 +47,7 @@ public class IronBall extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
-            for (Class dbClass : this.getDatabaseClasses()) {
+            for (Class<?> dbClass : this.getDatabaseClasses()) {
                 this.getDatabase().find(dbClass).findRowCount();
             }
         } catch (PersistenceException e) {
@@ -53,6 +56,14 @@ public class IronBall extends JavaPlugin {
         this.getServer().getPluginCommand("ironballarena").setExecutor(new ArenaCommand(this));
         this.getServer().getPluginCommand("ironball").setExecutor(new GameCommand(this));
         this.getServer().getPluginManager().registerEvents(new IronBallListener(this), this);
+        Map<String, Boolean> arenaPermissions = new HashMap<String, Boolean>();
+        for (Arena arena : this.getDatabase().find(Arena.class).findList()) {
+            arenaPermissions.put(arena.getName(), true);
+        }
+        Permission start = new Permission("ironball.start.*", arenaPermissions);
+        Permission play = new Permission("ironball.play.*", arenaPermissions);
+        this.getServer().getPluginManager().addPermission(start);
+        this.getServer().getPluginManager().addPermission(play);
     }
 
     @Override
