@@ -1,5 +1,6 @@
 package me.cmastudios.ironball;
 
+import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.sk89q.worldedit.Vector;
@@ -7,6 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -187,6 +189,24 @@ public class Arena {
 
     public World getWorld() {
         return Bukkit.getWorld(Arena.deserializeLocation(this.getMinPoint()).getWorld().getName());
+    }
+
+    /**
+     * Get an arena by a position in the world. This method queries the
+     * database.
+     *
+     * @param db Plugin database
+     * @param loc Location of arena
+     * @return arena or null if not found
+     */
+    public static Arena getArenaByLocation(EbeanServer db, Location loc) {
+        List<Arena> arenas = db.find(Arena.class).findList();
+        for (Arena arena : arenas) {
+            if (arena.getRegion().contains(BukkitUtil.toVector(loc))) {
+                return arena;
+            }
+        }
+        return null;
     }
 
     @Override

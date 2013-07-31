@@ -1,5 +1,7 @@
 package me.cmastudios.ironball;
 
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +12,7 @@ import me.cmastudios.ironball.command.*;
 import me.cmastudios.ironball.listener.IronBallListener;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -114,6 +117,25 @@ public class IronBall extends JavaPlugin {
     public Game getGameByArena(Arena arena) {
         for (Game game : this.activeGames) {
             if (game.getArena().equals(arena)) {
+                return game;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get an active game by location of the arena.
+     *
+     * @param loc Location inside the arena
+     * @return game or null if no arena found at given location
+     */
+    public Game getGameByLocation(Location loc) {
+        final Vector vec = BukkitUtil.toVector(loc);
+        for (Game game : this.activeGames) {
+            if (game.getArena().getWorld() != loc.getWorld()) {
+                continue;
+            }
+            if (game.getArena().getRegion().contains(vec)) {
                 return game;
             }
         }

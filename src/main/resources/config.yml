@@ -1,0 +1,11 @@
+## IronBall configuration file
+---
+damage:
+  player: false # Players being damaged by other players or the golem
+  golem: true   # Golems being damaged by a player
+point: # Give points for certain actions
+  goal: true         # Point for scoring team
+  outofbounds: false # Point for opposing team
+  killgolem: true    # Point for opposing team
+golem:
+  respawndelay: 0 # ticks (e.g. seconds * 20)
