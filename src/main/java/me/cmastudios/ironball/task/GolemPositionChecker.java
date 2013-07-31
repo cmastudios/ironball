@@ -51,11 +51,16 @@ public class GolemPositionChecker extends BukkitRunnable {
             plugin.getServer().getScheduler().runTaskLater(plugin, new GolemSpawnTask(game, plugin), plugin.getConfig().getInt("golem.respawndelay"));
             return;
         }
+        if (!golem.isValid()) {
+            game.setGolem(null);
+            return;
+        }
         Vector loc = BukkitUtil.toVector(golem.getLocation());
         Region region = game.getArena().getRegion();
         if (!region.contains(loc)) {
             // We lost the golem, so lets kill him and spawn a new one
             golem.remove();
+            game.setGolem(null);
             if (plugin.getConfig().getBoolean("point.outofbounds") && golem.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent event = (EntityDamageByEntityEvent) golem.getLastDamageCause();
                 if (event.getDamager() instanceof Player) {
@@ -74,6 +79,7 @@ public class GolemPositionChecker extends BukkitRunnable {
         Region blueGoal = game.getArena().getBlueGoalRegion();
         if (redGoal.contains(loc)) {
             golem.remove();
+            game.setGolem(null);
             if (plugin.getConfig().getBoolean("point.goal") && game.addPoint(TeamType.BLUE, 1)) {
                 return;
             }
@@ -82,6 +88,7 @@ public class GolemPositionChecker extends BukkitRunnable {
         }
         if (blueGoal.contains(loc)) {
             golem.remove();
+            game.setGolem(null);
             if (plugin.getConfig().getBoolean("point.goal") && game.addPoint(TeamType.RED, 1)) {
                 return;
             }
