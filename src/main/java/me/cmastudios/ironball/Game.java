@@ -125,11 +125,11 @@ public class Game {
     }
 
     /**
-     * Checks if adding a player to a team would cause unbalance. This does not
-     * actually add a player to a team, it only tests it.
+     * Checks if adding a player to a team would cause an imbalance. This does
+     * not actually add a player to a team, it only tests it.
      *
      * @param team Team to add a player to.
-     * @return true if adding a player to this team would cause unbalance.
+     * @return true if adding a player to this team would cause an imbalance.
      */
     public boolean addPlayerWouldCauseUnbalance(TeamType team) {
         int redPlayers = this.getTeam(TeamType.RED).size() + (team == TeamType.RED ? 1 : 0);
@@ -231,10 +231,10 @@ public class Game {
         if (!this.getPlayers().contains(player)) {
             return;
         }
-        this.restoreState(player);
         this.getPlayerMap().remove(player.getName());
+        this.restoreState(player);
         this.broadcastMessage(IronBall.getString("GAME.PLAYERQUIT", new Object[]{player.getDisplayName()}));
-        if (this.getPlayerMap().size() < 2) {
+        if (this.getPlayerMap().size() < MIN_PLAYERS) {
             this.endGame();
         }
     }
@@ -282,10 +282,11 @@ public class Game {
     public static final int MIN_PLAYERS = 1; // For testing
 
     /**
-     * Checks if a game can be started. A game can be started if 4 or more
-     * players have registered.
+     * Checks if a game can be started. A game can be started if the minimum
+     * player count is satisfied.
      *
-     * @return true if there are at least 4 players.
+     * @return true if there are enough players registered.
+     * @see #MIN_PLAYERS
      */
     public boolean canStartGame() {
         return this.getPlayerMap().size() >= MIN_PLAYERS;
